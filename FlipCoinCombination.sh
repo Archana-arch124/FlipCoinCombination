@@ -1,7 +1,13 @@
 #Welcome to FlipCoin Combination Problem
 
 #!/bin/bash
+declare -A doublet
 
+headheadwon=0
+headtailwon=0
+tailheadwon=0
+tailtailwon=0
+#we take HH=11,TT=11,TH=01,HT=10
 function maxout(){
     arr=("$@")
     max=0
@@ -15,33 +21,40 @@ function maxout(){
     echo $max
 }
 
-read -p "Enter number of flips:" number
-declare -A singlet
-headwon=0
-tailwon=0
-
 for ((i=1;i<=$number;i++))
 do
-   flip=$((RANDOM%2))
-   singlet[$i]=$flip
-   if [ $flip -eq 0 ]
+   flip=$(((RANDOM%2)*10+($RANDOM%2)))
+   if [ $flip -eq 11 ]
    then
-       ((tailwon++))
-   else
-       ((headwon++))
+       doublet[$i]="HH"
+       ((headheadwon++))
+      elif [ $flip -eq 10 ]
+      then
+       doublet[$i]="HT"
+       ((headtaiwon++))
+      elif [ $flip -eq 01 ]
+      then
+       doublet[$i]="TH"
+       ((tailheadwon++))
+      else
+       doublet[$i]="TT"
+       ((tailtailwon++))
     fi
 done
 
-echo "   SINGLET SIMULATIONS       "
-echo "Simulation results are :"${singlet[@]}
-echo "Singlet Head win percentage :"
-echo $headwon $number | awk '{print 100*$1/$2}'
-echo "Singlet Tail win percentage :"
-echo $tailwon $number | awk '{print 100*$1/$2}'
+echo "   DOUBLET SIMULATIONS       "
+echo "Simulation results are :"${doublet[@]}
+echo "Doublet HeadHead win percentage :"
+echo $headheadwon $number | awk '{print 100*$1/$2}'
+echo "Doublet HeadTail win percentage :"
+echo $headtailwon $number | awk '{print 100*$1/$2}'
+echo "Doublet TailHead win percentage :"
+echo $tailheadwon $number | awk '{print 100*$1/$2}'
+echo "Doublet TailTail win percentage :"
+echo $tailtailwon $number | awk '{print 100*$1/$2}'
 
-singletresult=($headwon $tailwon)
-singletval=("H" "T")
-val=$(maxout "${singletresult[@]}")
-echo "Winning combinations are ${singletval[$val]}"
-
+doubletresult=($headheadwon $headtailwon $tailheadwon $tailtailwon )
+doubletval=("HH" "HT" "TH" "TT")
+val=$(maxout "${doubletresult[@]}")
+echo "Winning combinations are ${doubletval[$val]}"
 
