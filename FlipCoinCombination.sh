@@ -15,7 +15,7 @@ function maxout(){
     echo $max
 }
 
-read -p "Enter number of flips:" number
+read -p " Enter number of flips:" number
 declare -A singlet
 headwon=0
 tailwon=0
