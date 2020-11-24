@@ -1,13 +1,18 @@
 #Welcome to FlipCoin Combination Problem
 
 #!/bin/bash
-declare -A doublet
+read -p "Enter number of flips:" number
+declare -A triplet
+headheadheadwon=0
+headheadtailwon=0
+headtailheadwon=0
+headtailtailwon=0
+tailtailtailwon=0
+tailheadtailwon=0
+tailtailheadwon=0
+tailheadheadwon=0
 
-headheadwon=0
-headtailwon=0
-tailheadwon=0
-tailtailwon=0
-#we take HH=11,TT=11,TH=01,HT=10
+
 function maxout(){
     arr=("$@")
     max=0
@@ -20,41 +25,58 @@ function maxout(){
     done
     echo $max
 }
-
 for ((i=1;i<=$number;i++))
 do
-   flip=$(((RANDOM%2)*10+($RANDOM%2)))
-   if [ $flip -eq 11 ]
-   then
-       doublet[$i]="HH"
-       ((headheadwon++))
-      elif [ $flip -eq 10 ]
-      then
-       doublet[$i]="HT"
-       ((headtaiwon++))
-      elif [ $flip -eq 01 ]
-      then
-       doublet[$i]="TH"
-       ((tailheadwon++))
-      else
-       doublet[$i]="TT"
-       ((tailtailwon++))
-    fi
+   flip=$((($RANDOM%2)*100+($RANDOM%2)*10+($RANDOM%2)))
+   case $flip in
+      0)
+           triplet[$i]="TTT"
+           ((tailtailtailwon++))
+            ;;
+      1)
+           triplet[$i]="TTH"
+           ((tailtailheadwon++))
+            ;;
+      10)
+           triplet[$i]="THT"
+           ((tailheadtailwon++))
+           ;;
+     11)
+           triplet[$i]="THH"
+           ((tailheadheadwon++))
+            ;;
+      100)
+           triplet[$i]="HTT"
+           ((headtailtailwon++))
+           ;;
+      110)
+           triplet[$i]="HHT"
+           ((headheadtailwon++))
+            ;;
+       *)
+           triplet[$i]="HHH"
+           ((headheadheadwon++))
+            ;;
+   esac
 done
 
-echo "   DOUBLET SIMULATIONS       "
-echo "Simulation results are :"${doublet[@]}
-echo "Doublet HeadHead win percentage :"
-echo $headheadwon $number | awk '{print 100*$1/$2}'
-echo "Doublet HeadTail win percentage :"
-echo $headtailwon $number | awk '{print 100*$1/$2}'
-echo "Doublet TailHead win percentage :"
-echo $tailheadwon $number | awk '{print 100*$1/$2}'
-echo "Doublet TailTail win percentage :"
-echo $tailtailwon $number | awk '{print 100*$1/$2}'
+echo "   TRIPLET SIMULATIONS       "
+echo "Simulation results are :"${triplet[@]}
+echo "Triplet HeadHeadHead win percentage :"
+echo $headheadheadwon $number | awk '{print 100*$1/$2}'
+echo "Triplet HeadHeadTail win percentage :"
+echo $headheadtailwon $number | awk '{print 100*$1/$2}'
+echo "Triplet TailTailHead win percentage :"
+echo $tailtailheadwon $number | awk '{print 100*$1/$2}'
+echo "Singlet HeadTailHead win percentage :"
+echo $headtailheadwon $number | awk '{print 100*$1/$2}'
+echo "Triplet TailHeadTail win percentage :"
+echo $tailheadtailwon $number | awk '{print 100*$1/$2}'
+echo "Triplet TailTailTail win percentage :"
+echo $tailtailtailwon $number | awk '{print 100*$1/$2}'
 
-doubletresult=($headheadwon $headtailwon $tailheadwon $tailtailwon )
-doubletval=("HH" "HT" "TH" "TT")
-val=$(maxout "${doubletresult[@]}")
-echo "Winning combinations are ${doubletval[$val]}"
+tripletresult=($headheadheadwon $headheadtailwon $tailtailheadwon $tailtailtailwon $headtailheadwon $tailheadtailwon)
+tripletval=("HHT" "HTH" "TTH" "HTT" "THT" "TTT")
+val=$(maxout "${tripletresult[@]}")
+echo "Winning combinations are ${tripletval[$val]}"
 
